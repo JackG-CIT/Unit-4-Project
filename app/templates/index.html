@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CIT Bobblehead Store</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>CIT Bobbleheads</h1>
+        <div class="cart">Cart</div>
+    </div>
+
+    <div class="container">
+        <div style="margin-bottom: 30px;">
+            <h2>Add New Bobblehead</h2>
+            <form action="/add" method="post" enctype="multipart/form-data">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="number" name="price" placeholder="Price" required>
+                <input type="number" name="stock" placeholder="Stock" required>
+                <input type="file" name="image" accept="image/*">
+                <button type="submit">Add Item</button>
+            </form>
+        </div>
+        <div class="product-grid">
+
+            {% for item in items %}
+            <div class="card">
+                {% if item.image %}
+                    <img src="/static/uploads/{{ item.image }}" class="product-img">
+                {% endif %}
+                <h3>{{ item.name }}</h3>
+                <p class="price">${{ item.price }}</p>
+                <p>Stock: {{ item.stock }}</p>
+
+                <form action="/buy" method="post">
+                    <input type="hidden" name="item" value="{{ item.name }}">
+                    <input type="hidden" name="amount" value="{{ item.price }}">
+
+                    {% if item.stock > 0 %}
+                        <button type="submit">Buy</button>
+                    {% else %}
+                        <button disabled>Out of Stock</button>
+                    {% endif %}
+                </form>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</body>
+</html>

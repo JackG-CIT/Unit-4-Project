@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  frontend:
+    build: ./app
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - payment
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=goldeninvest
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    volumes:
+      - ./app:/app
+      - ./app/static/uploads:/app/static/uploads
+
+  payment:
+    build: ./payment
+    container_name: payment
+    ports:
+      - "5001:5001"
+
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: goldeninvest
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
