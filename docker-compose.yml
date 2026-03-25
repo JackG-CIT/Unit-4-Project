@@ -1,12 +1,7 @@
-version: '3.8'
-
 services:
 
   frontend:
     build: ./app
-    container_name: flask_app
-    ports:
-      - "5000:5000"
     depends_on:
       - payment
       - db
@@ -19,15 +14,27 @@ services:
       - ./app:/app
       - ./app/static/uploads:/app/static/uploads
 
+  # 👇 This is your ONE exposed frontend (for browser access)
+  frontend_public:
+    build: ./app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - payment
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=goldeninvest
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+
   payment:
     build: ./payment
-    container_name: payment
     ports:
-      - "80:80"
+      - "5001:5001"
 
   db:
     image: postgres:15
-    container_name: postgres_db
     restart: always
     environment:
       POSTGRES_DB: goldeninvest
